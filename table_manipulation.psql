@@ -1,0 +1,24 @@
+create table freelance(
+    id serial primary key,
+    name varchar(50)
+);
+
+select * from freelance;
+
+insert into freelance(name) VALUES
+('Peter'), ('Ann'), ('Jane');
+
+alter table freelance
+    add column gender char(1);
+
+alter table freelance
+    add column age int,
+    add column email char(50);
+
+alter table freelance rename column name to first_name;
+
+alter table freelance alter column age type float;
+
+alter table freelance
+    drop column gender,
+    drop column email;

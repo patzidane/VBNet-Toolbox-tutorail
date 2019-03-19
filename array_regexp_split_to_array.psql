@@ -1,0 +1,38 @@
+select * from movies limit 10;
+
+select title, genre, regexp_split_to_array(genre, ',') genra_a
+    from movies limit 10;
+
+alter table movies
+add column genre_a varchar[]; 
+
+update movies
+set genre_a = regexp_split_to_array(genre, ',');
+
+select title, genre_a from movies limit 10;
+
+select title, genre_a 
+    from movies
+    where 'Music' = any(genre_a);
+
+select title, genre_a
+    from movies
+    where 'music' ilike any(genre_a);
+
+select title, genre_a
+    from movies
+    where 'music' ~* any(genre_a);
+
+select title, unnest(genre_a) g
+    from movies limit 10;
+
+--commen table expression
+with cte as(
+    select title, unnest(genre_a) g
+    from movies limit 10
+)
+select g, count(g) 
+    from cte 
+    group by g 
+    order by count desc;
+

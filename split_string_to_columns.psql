@@ -1,0 +1,38 @@
+--แบ่ง ชื่อ นามสกุล จากหนึ่ง คอลัมภ์
+select director from movie1000;
+
+select director 
+    string_to_array(director, ' ')
+    from movie1000;
+
+-- commen table expression
+with cte as(
+    select
+    string_to_array(director, ' ') as fullname
+    from movie1000
+)
+select fullname[1] as fname, fullname[2] as lname
+    from cte;
+
+select * from movie1000;
+
+select title, year, director 
+    into topmovie
+    from movie1000;
+
+alter table topmovie
+    add column fname varchar(50),
+    add column lname varchar(50);
+
+select * from topmovie;
+
+with cte as(
+    select
+    string_to_array(director, ' ') as fullname
+    from topmovie
+)
+update topmovie set fname = cte.fullname[1], lname = cte.fullname[2]
+    from cte
+    where cte.director = topmovie.director;
+
+select * from topmovie;

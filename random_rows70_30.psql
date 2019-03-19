@@ -1,0 +1,47 @@
+select * from province;
+
+select random();
+
+select name, random() from province;
+
+select name, random() from province order by random();
+
+select name, random() from province order by random() limit 1;
+
+select count(*) from province;
+
+select count(*), count(*) *.7, count(*) *.3 from province;
+
+select count(*), floor(count(*) *.7), count(*) *.3 from province;
+
+select name, random() from province order by random() limit (
+    select floor(count(*) *.7) from province
+);
+
+drop table if exists training
+select *
+    into training
+    from province 
+    order by random() limit (
+    select floor(count(*) *.7) from province
+    );
+
+select * from training;
+
+select * from province
+EXCEPT
+select * from training;
+
+with cte as (
+    select * from province
+    EXCEPT
+    select * from training
+)
+select * 
+    into test
+    from cte; 
+
+select * from test;
+
+select * from training;
+

@@ -1,0 +1,39 @@
+select name, weight_kg, weight_kg * 2.2 as w from employee;
+
+select name, (weight_kg / height_m ^ 2) as bmi
+     from employee;
+
+select name, 
+    (weight_kg / height_m ^ 2) as bmi,
+    (weight_kg / height_m ^ 2)::numeric(4, 2) as bmi
+     from employee;
+
+select name, 
+    (weight_kg / height_m ^ 2) as bmi,
+    (weight_kg / height_m ^ 2)::numeric(4, 2) as bmi2,
+    round(weight_kg / height_m ^ 2, 2) as bmi3
+     from employee;
+
+select * from employee;
+
+alter table employee 
+    add column lname varchar(50);
+
+update employee set lname ='Stone'
+    where id = 7;
+ 
+select name ||' '|| lname as fullname from employee;
+select name ||', '|| lname as fullname from employee;
+
+select 
+    case gender
+        when 'm' then 'Mr.'
+        when 'f' then 'Ms.'
+    end || ' ' ||
+    name ||' '|| lname as fullname from employee;
+
+--default date interval format->ISO 8601
+--ctrl+, typing-> postgres -> workspace setting -> humanize
+select name, age(dob) from employee;
+
+

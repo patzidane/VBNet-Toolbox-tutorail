@@ -1,0 +1,70 @@
+insert into province VALUES
+    ('kanjanaburi', 'C'),
+    ('phuket', 'S'),
+    ('lumpang', 'N'),
+    ('udonthani', 'NE');
+
+select name, region,
+        case region
+            when 'C' then 'central'
+            when 'S' then 'south'
+            when 'N' then 'north'
+            when 'NE' then 'northeast'
+        end as region_text
+    from province;
+
+select name, region, area_km2,
+    CASE
+        when area_km2 > 15000 then 'large'
+        when area_km2 < 7001 and area_km2 <= 15000 then 'medium'
+        when area_km2 between 100 and 700 then 'small'
+        else 'tiny'
+    end area_size
+    from province;
+
+with cte as (   --get new table cte contians 4 columns 
+                --name, region, area_km2 and area_size
+    select name, region, area_km2,
+    CASE
+        when area_km2 > 15000 then 'large'
+        when area_km2 < 7001 and area_km2 <= 15000 then 'medium'
+        when area_km2 between 100 and 700 then 'small'
+        else 'tiny'
+    end area_size
+    from province
+)
+select area_size, count(area_size) as count
+    from cte
+    group by area_size
+    order by count;
+
+select * from game100;
+
+select title, platform,
+    CASE
+        when platform ilike '%playstation%' then 'Sony'
+        when platform ilike '%xbox%' then 'Microsoft'
+        when platform ilike '%wii%' or platform ilike
+        '%nintendo%' then 'Nintendo'
+        when platform ~* 'iphone|ipad' then 'Apple'
+        else 'other'
+    end as company
+    from game100
+    order by company;
+
+with cte as (
+    select title, platform,
+    CASE
+        when platform ilike '%playstation%' then 'Sony'
+        when platform ilike '%xbox%' then 'Microsoft'
+        when platform ilike '%wii%' or platform ilike
+        '%nintendo%' then 'Nintendo'
+        when platform ~* 'iphone|ipad' then 'Apple'
+        else 'other'
+    end as company
+    from game100
+)
+select company, count(company) as count
+    from cte
+    group by company
+    order by count desc;

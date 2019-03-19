@@ -1,0 +1,456 @@
+--rollup
+SELECT
+    brand,
+    segment,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    ROLLUP (brand, segment)
+ORDER BY
+    brand,
+    segment;
+
+SELECT
+    segment,
+    brand,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    ROLLUP (segment, brand)
+ORDER BY
+    segment,
+    brand;
+
+SELECT
+    segment,
+    brand,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    segment,
+    ROLLUP (brand)
+ORDER BY
+    segment,
+    brand;
+
+select extract(year from rental_date) y,
+    extract(month from rental_date) m,
+    extract(day from rental_date) d,
+    count(rental_id)
+    from rental
+    group by 
+    rollup(
+        extract(year from rental_date),
+        extract(month from rental_date),
+        extract(day from rental_date)
+    )
+    order by y, m, d;
+
+--subquery
+select avg(rental_rate) from film;
+
+select film_id, title, rental_rate
+    from film
+    where rental_rate > 2.98;
+
+select film_id, title, rental_rate
+    from film
+    where rental_rate > (
+        select avg(rental_rate) from film
+    );
+
+select inventory.film_id
+    from rental
+    inner join inventory on inventory.inventory_id = rental.inventory_id
+    where
+    return_date between '2005-05-29'
+    and '2005-05-30';
+
+select film_id, title
+    from film 
+    where film_id in(
+        select inventory.film_id
+    from rental
+    inner join inventory on inventory.inventory_id = rental.inventory_id
+    where
+    return_date between '2005-05-29'
+    and '2005-05-30'
+    );
+
+--subquery with EXISTS operator
+SELECT
+ first_name,
+ last_name
+FROM
+ customer
+WHERE
+ EXISTS (
+ SELECT
+ 1
+ FROM
+ payment
+ WHERE
+ payment.customer_id = customer.customer_id
+ );
+
+ --exists
+ --If the subquery returns at least one row, 
+ --the result of EXISTS is true. In case the subquery returns no row, 
+ --the result is of EXISTS is false.
+
+ SELECT first_name,
+       last_name
+FROM customer c
+WHERE EXISTS
+    (SELECT 1
+     FROM payment p
+     WHERE p.customer_id = c.customer_id
+       AND amount > 11 )
+ORDER BY first_name,
+         last_name;
+
+SELECT first_name,
+       last_name
+FROM customer c
+WHERE NOT EXISTS
+    (SELECT 1
+     FROM payment p
+     WHERE p.customer_id = c.customer_id
+       AND amount > 11 )
+ORDER BY first_name,
+         last_name;
+
+SELECT
+ first_name,
+ last_name
+FROM
+ customer
+WHERE
+ EXISTS( SELECT NULL )
+ORDER BY
+ first_name,
+ last_name;
+
+ --any
+ --compares a value to a set of values returned by a subquery.
+SELECT
+    MAX( length )
+FROM
+    film
+INNER JOIN film_category
+        USING(film_id)
+GROUP BY
+    category_id;
+
+SELECT title, length
+FROM film
+WHERE length >= ANY(
+    SELECT MAX( length )
+    FROM film
+    INNER JOIN film_category USING(film_id)
+    GROUP BY  category_id );
+
+SELECT
+    title
+FROM
+    film
+where length in(
+    SELECT MAX( length )
+    FROM film
+    INNER JOIN film_category USING(film_id)
+    GROUP BY  category_id
+);
+
+SELECT
+    title,
+    category_id
+FROM
+    film
+INNER JOIN film_category
+        USING(film_id)
+WHERE
+    category_id = ANY(
+        SELECT
+            category_id
+        FROM
+            category
+        WHERE
+            NAME = 'Action'
+            OR NAME = 'Drama'
+    );
+
+--Note that the <> ANY operator is different from NOT IN. The following expression:
+--x <> ANY (a,b,c) 
+--s equivalent to
+--x <> a OR <> b OR x <> c
+SELECT
+    ROUND(AVG(length), 2) avg_length
+FROM
+    film
+GROUP BY
+    rating
+ORDER BY
+    avg_length DESC;
+
+--lengths are greater than the list of the average lengths above, 
+--you use the ALL and greater than operator (>) as follows:
+SELECT
+    film_id,
+    title,
+    length
+FROM
+    film
+WHERE
+    length > ALL (
+            SELECT
+                ROUND(AVG (length),2)
+            FROM
+                film
+            GROUP BY
+                rating
+    )
+ORDER BY
+    length;
+
+--insert
+INSERT INTO table (column1, column2, …)
+VALUES
+ (value1, value2, …),
+ (value1, value2, …) ,...;
+ --To insert data that comes from another table
+INSERT INTO table(column1,column2,...)
+SELECT column1,column2,...
+FROM another_table
+WHERE condition;
+
+CREATE TABLE link (
+ ID serial PRIMARY KEY,
+ url VARCHAR (255) NOT NULL,
+ name VARCHAR (255) NOT NULL,
+ description VARCHAR (255),
+ rel VARCHAR (50)
+);
+
+INSERT INTO link (url, name)
+VALUES
+ ('http://www.postgresqltutorial.com','PostgreSQL Tutorial');
+
+ select * from link;
+
+INSERT INTO link (url, name)
+VALUES
+ ('http://www.oreilly.com','O''Reilly Media');
+
+INSERT INTO link (url, name)
+VALUES
+ ('http://www.google.com','Google'),
+ ('http://www.yahoo.com','Yahoo'),
+ ('http://www.bing.com','Bing');
+
+ ALTER TABLE link ADD COLUMN last_update DATE;
+
+ ALTER TABLE link ALTER COLUMN last_update
+SET DEFAULT CURRENT_DATE;
+
+INSERT INTO link (url, name, last_update)
+VALUES
+ ('http://www.facebook.com','Facebook','2013-06-01');
+
+INSERT INTO link (url, name, last_update)
+VALUES
+ ('https://www.tumblr.com/','Tumblr',DEFAULT);
+
+CREATE TABLE link_tmp (LIKE link);
+
+INSERT INTO link_tmp 
+SELECT
+ *
+FROM
+ link
+WHERE
+ last_update IS NOT NULL;
+
+SELECT * FROM link_tmp;
+
+INSERT INTO link (url, NAME, last_update)
+VALUES('test','PostgreSQLTest',DEFAULT) 
+RETURNING id;
+--RETURNING *;
+
+SELECT * FROM link;
+
+--update
+UPDATE link
+SET last_update = DEFAULT
+WHERE
+ last_update IS NULL;
+
+UPDATE link
+SET rel = 'nofollow';
+
+UPDATE link
+SET description = name;
+
+update link_tmp
+    set rel = link.rel,
+        description = link.description,
+        last_update = link.last_update
+    from link
+    where link_tmp.id = link.id;
+
+--UPDATE JOIN or UPDATE INNER JOIN 
+--because two or more tables are involved in the UPDATE statement. 
+--The join condition is specified in the WHERE clause.
+
+UPDATE link
+SET description = 'Learn PostgreSQL fast and easy',
+ rel = 'follow'
+WHERE
+ ID = 1 
+RETURNING id,
+ description,
+ rel;
+
+CREATE TABLE product_segment (
+    ID SERIAL PRIMARY KEY,
+    segment VARCHAR NOT NULL,
+    discount NUMERIC (4, 2)
+);
+ 
+INSERT INTO product_segment (segment, discount)
+VALUES
+    ('Grand Luxury', 0.05),
+    ('Luxury', 0.06),
+    ('Mass', 0.1);
+
+CREATE TABLE product(
+    id serial primary key,
+    name varchar not null,
+    price numeric(10,2),
+    net_price numeric(10,2),
+    segment_id int not null,
+    foreign key(segment_id) references product_segment(id)
+);
+ 
+INSERT INTO product (name, price, segment_id) 
+VALUES ('diam', 804.89, 1),
+    ('vestibulum aliquet', 228.55, 3),
+    ('lacinia erat', 366.45, 2),
+    ('scelerisque quam turpis', 145.33, 3),
+    ('justo lacinia', 551.77, 2),
+    ('ultrices mattis odio', 261.58, 3),
+    ('hendrerit', 519.62, 2),
+    ('in hac habitasse', 843.31, 1),
+    ('orci eget orci', 254.18, 3),
+    ('pellentesque', 427.78, 2),
+    ('sit amet nunc', 936.29, 1),
+    ('sed vestibulum', 910.34, 1),
+    ('turpis eget', 208.33, 3),
+    ('cursus vestibulum', 985.45, 1),
+    ('orci nullam', 841.26, 1),
+    ('est quam pharetra', 896.38, 1),
+    ('posuere', 575.74, 2),
+    ('ligula', 530.64, 2),
+    ('convallis', 892.43, 1),
+    ('nulla elit ac', 161.71, 3);
+
+select * from product;
+
+UPDATE product
+SET net_price = price - price * discount
+FROM
+product_segment
+WHERE
+product.segment_id = product_segment.id;
+
+--upsert
+CREATE TABLE customers (
+ customer_id serial PRIMARY KEY,
+ name VARCHAR UNIQUE,
+ email VARCHAR NOT NULL,
+ active bool NOT NULL DEFAULT TRUE
+);
+
+INSERT INTO customers (NAME, email)
+VALUES
+ ('IBM', 'contact@ibm.com'),
+ (
+ 'Microsoft',
+ 'contact@microsoft.com'
+ ),
+ (
+ 'Intel',
+ 'contact@intel.com'
+ );
+
+ INSERT INTO customers (NAME, email)
+VALUES
+ (
+ 'Microsoft',
+ 'hotline@microsoft.com'
+ ) 
+ON CONFLICT ON CONSTRAINT customers_name_key 
+DO NOTHING;
+
+select * from customers;
+
+INSERT INTO customers (name, email)
+VALUES
+ (
+ 'Microsoft',
+ 'hotline@microsoft.com'
+ ) 
+ON CONFLICT (name) 
+DO NOTHING;
+
+INSERT INTO customers (name, email)
+VALUES
+ (
+ 'Microsoft',
+ 'hotline@microsoft.com'
+ ) 
+ON CONFLICT (name) 
+DO
+ UPDATE
+   SET email = EXCLUDED.email || ';' || customers.email;
+
+INSERT INTO customers (NAME, email)
+VALUES
+ ('Test', 'pat@ibm.com');
+
+INSERT INTO customers (name, email)
+VALUES
+ (
+ 'Test',
+ 'pattana@microsoft.com'
+ ) 
+ON CONFLICT (name) 
+DO 
+    UPDATE
+    SET email = EXCLUDED.email;
+
+--delete
+DELETE FROM table
+USING another_table
+WHERE table.id = another_table.id AND …
+
+DELETE FROM table
+WHERE table.id = (SELECT id FROM another_table);
+
+DELETE FROM link
+WHERE id = 8;
+
+select * from link_tmp;
+
+DELETE FROM link 
+USING link_tmp
+WHERE
+    link.id = link_tmp.id;
+
+DELETE FROM link;
+
+DELETE FROM link_tmp 
+RETURNING *;

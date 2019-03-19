@@ -1,0 +1,7 @@
+product_id,name,price,is_recommend
+3,latte,60.00,t
+7,,45.00,f
+1,espesso,50.00,
+5,grenn tea,80.00,t
+6,black tea,50.00,f
+63,water,10.00,

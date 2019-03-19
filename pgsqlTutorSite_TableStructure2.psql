@@ -1,0 +1,92 @@
+--ALTER TABLE
+CREATE TABLE linkNew (
+ link_id serial PRIMARY KEY,
+ title VARCHAR (512) NOT NULL,
+ url VARCHAR (1024) NOT NULL UNIQUE
+);
+
+alter table linkNew add column active boolean;
+
+select * from linkNew;
+
+alter table linkNew drop column active;
+
+alter table linkNew rename column title to link_title;
+
+ALTER TABLE linkNew ADD COLUMN target VARCHAR(10);
+
+ALTER TABLE linkNew ALTER COLUMN target
+SET DEFAULT '_blank';
+
+INSERT INTO linkNew (link_title, url)
+VALUES('PostgreSQL Tutorial','http://www.postgresqltutorial.com/');
+
+select * from linkNew;
+
+ALTER TABLE linkNew ADD CHECK (target IN ('_self', '_blank', '_parent', '_top'));
+
+INSERT INTO linkNew(link_title,url,target) 
+VALUES('PostgreSQL','http://www.postgresql.org/','whatever');
+
+ALTER TABLE link RENAME TO url;
+
+select * from url;
+
+--add column
+--PostgreSQL has no option to specify the position of the new column in the table.
+CREATE TABLE customersTest (
+ id SERIAL PRIMARY KEY,
+ customer_name VARCHAR NOT NULL
+);
+
+ALTER TABLE customersTest 
+ADD COLUMN phone VARCHAR;
+
+ALTER TABLE customersTest
+ ADD COLUMN fax VARCHAR,
+ ADD COLUMN email VARCHAR;
+
+ select * from customersTest;
+
+INSERT INTO customersTest (customer_name)
+VALUES
+ ('Apple'),
+ ('Samsung'),
+ ('Sony');
+
+ ALTER TABLE customersTest 
+ADD COLUMN contact_name VARCHAR NOT NULL; --error
+
+--To solve this problem…
+ALTER TABLE customersTest 
+ADD COLUMN contact_name VARCHAR;
+
+--then
+UPDATE customersTest
+SET contact_name = 'John Doe'
+WHERE
+ ID = 1;
+ 
+UPDATE customersTest
+SET contact_name = 'Mary Doe'
+WHERE
+ ID = 2;
+ 
+UPDATE customersTest
+SET contact_name = 'Lily Bush'
+WHERE
+ ID = 3;
+
+ --and 
+
+ALTER TABLE customersTest
+ALTER COLUMN contact_name SET NOT NULL;
+
+--Another way to solve the problem is to…
+ALTER TABLE customersTest
+ADD COLUMN contact_name NOT NULL DEFAULT 'foo';
+
+ALTER TABLE customers 
+ALTER COLUMN contact_name 
+DROP DEFAULT;
+

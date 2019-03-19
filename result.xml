@@ -1,0 +1,18 @@
+1<province xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <row>
+        <name>kanjanaburi</name>
+        <region>C</region>
+    </row>
+    <row>
+        <name>phuket</name>
+        <region>S</region>
+    </row>
+    <row>
+        <name>lumpang</name>
+        <region>N</region>
+    </row>
+    <row>
+        <name>udonthani</name>
+        <region>NE</region>
+    </row>
+</province>

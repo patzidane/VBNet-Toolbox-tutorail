@@ -1,0 +1,15 @@
+insert into drink values
+    (2, 'latte', 50, false);
+
+insert into drink(product_id, name, price, is_recommend)
+    values(10, 'espresso', 40, null); --so kann null eingeben.
+
+select * from drink;
+
+insert into drink(product_id, price, name)
+    values(11, 99, 'smoothie');
+
+insert into drink(product_id, name, price, is_recommend)
+values(12, 'green tea', 40, true),
+    (13, 'jasmine tea', 45, false),
+    (14, 'honey tea', 50, null);

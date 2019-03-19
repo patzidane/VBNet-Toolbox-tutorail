@@ -1,0 +1,83 @@
+CREATE TABLE capitals (
+  name       text,
+  population real,
+  altitude   int,    -- (in ft)
+  state      char(2)
+);
+
+CREATE TABLE non_capitals (
+  name       text,
+  population real,
+  altitude   int     -- (in ft)
+);
+
+CREATE VIEW cities AS
+  SELECT name, population, altitude FROM capitals
+    UNION
+  SELECT name, population, altitude FROM non_capitals;
+
+select * from cities;
+
+drop view cities;
+
+CREATE TABLE cities (
+  name       text,
+  population real,
+  altitude   int     -- (in ft)
+);
+
+
+drop table capitals;
+
+
+CREATE TABLE capitals (
+  state      char(2)
+) INHERITS (cities);
+
+insert into cities values('Las Vegas', 0.0, 2174),
+    ('Mariposa', 0.0, 1953),
+    ('Madison', 0.0, 845);
+
+SELECT name, altitude
+  FROM cities
+  WHERE altitude > 500;
+
+SELECT name, altitude
+    FROM ONLY cities
+    WHERE altitude > 500;
+
+CREATE TABLE mytable(f1 int, f2 float, f3 text);
+
+CREATE FUNCTION getf1(mytable) RETURNS int AS 'SELECT $1.f1' LANGUAGE SQL;
+
+SELECT getf1(ROW(1,2.5,'this is a test'));
+
+CREATE TYPE myrowtype AS (f1 int, f2 text, f3 numeric);
+
+CREATE FUNCTION getf1(myrowtype) RETURNS int AS 'SELECT $1.f1' LANGUAGE SQL;
+
+SELECT getf1(ROW(1,2.5,'this is a test'));
+
+SELECT getf1(ROW(1,2.5,'this is a test')::mytable);
+
+SELECT getf1(CAST(ROW(11,'this is a test',2.5) AS myrowtype));
+
+SELECT ROW(1,2.5,'this is a test') = ROW(1, 3, 'not the same');
+
+SELECT ROW(table.*) IS NULL FROM table;  -- detect all-null rows
+
+CREATE FUNCTION concat_lower_or_upper(a text, b text, uppercase boolean DEFAULT false)
+RETURNS text
+AS
+$$
+ SELECT CASE
+        WHEN $3 THEN UPPER($1 || ' ' || $2)
+        ELSE LOWER($1 || ' ' || $2)
+        END;
+$$
+LANGUAGE SQL IMMUTABLE STRICT;
+
+SELECT concat_lower_or_upper('Hello', 'World', true);
+
+SELECT concat_lower_or_upper('Hello', 'World');
+

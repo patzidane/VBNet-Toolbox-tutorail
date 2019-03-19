@@ -1,0 +1,69 @@
+create table employee(
+    id int primary key,
+    name varchar(50) not null,
+    gender varchar(5) not null,
+    weight_kg int,
+    height_m numeric
+);
+
+insert into employee VALUES
+    (1, 'Kai', 'm', 58, 1.5),
+    (2, 'Natalie', 'f', 74, 1.75),
+    (3, 'Sadie', 'f', 73, 1.5),
+    (4, 'Gavin', 'm', 54, 1.5),
+    (5, 'Paisley', 'f', 95, 1.63),
+    (6, 'Madison', 'f', 70, 1.65),
+    (7, 'Tristan', 'm', 65, 1.65);
+
+select * from employee;
+
+select *, weight_kg/(height_m ^ 2) bmi from employee;
+
+create function bmi(h real, w real) 
+returns real language 'plpgsql' as $$
+BEGIN
+    return w/(h^2);
+end;
+$$
+
+select bmi(1.7, 70);
+
+select *, bmi(height_m, weight_kg) body_mass_index from employee;
+
+drop function if exists bmi;
+
+create or replace function bmi(h real, w real) 
+returns real language 'plpgsql' as $$
+BEGIN
+    return w/(h*h);
+end;
+$$
+
+create or replace function rectangle(h real, w real) 
+returns real language 'plpgsql' as $$
+BEGIN
+    return w*h;
+end;
+$$
+
+select rectangle(5, 10);
+
+create or replace function square(s real) 
+returns real language 'plpgsql' as $$
+BEGIN
+    return rectangle(s, s);
+end;
+$$
+
+select square(5);
+
+create or replace function cylinder(r real, h real) 
+returns real language 'plpgsql' as $$
+declare circle_area real;
+BEGIN
+    circle_area := pi() * r ^ 2;
+    return circle_area *h;
+end;
+$$
+
+select cylinder(2, 10);

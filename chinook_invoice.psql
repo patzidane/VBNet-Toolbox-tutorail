@@ -1,0 +1,33 @@
+select "BillingCountry", "Total"
+    from "Invoice";
+
+select "BillingCountry" from "Invoice"
+group by "BillingCountry";
+
+select sum("Total") from "Invoice"
+    group by "BillingCountry";
+
+select "BillingCountry", sum("Total") as billing_total 
+    from "Invoice"
+    group by "BillingCountry";
+
+select "BillingCountry", sum("Total") as billing_total 
+    from "Invoice"
+    group by "BillingCountry"
+    -- order by sum("Total") desc
+    order by "BillingCountry";
+    -- limit 5;
+
+select "BillingCountry", sum("Total") as billing_total 
+    from "Invoice"
+    group by "BillingCountry"
+    having sum("Total") > 300
+    order by sum("Total") desc
+    limit 5;
+
+select "BillingCountry", sum("Total") as billing_total 
+    from "Invoice"
+    group by "BillingCountry"
+    having sum("Total") > 100 and sum("Total") < 300
+    order by sum("Total") desc
+    limit 5;

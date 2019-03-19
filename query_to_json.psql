@@ -1,0 +1,28 @@
+select * from province;
+
+select row_to_json(province) from province;
+
+select row_to_json(row(name)) 
+    from province;
+
+with cte as(
+    select name from province
+)
+select row_to_json(cte) from cte;
+
+with cte as(
+    select name 
+    from province
+    where region = 'S'
+)
+select row_to_json(cte) from cte;
+
+copy(
+with cte as(
+    select name 
+    from province
+    where region = 'S'
+)
+select row_to_json(cte) from cte
+)
+to '/tmp/pSouth.json';

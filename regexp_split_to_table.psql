@@ -1,0 +1,42 @@
+select title, unnest(genre) g
+    from movies
+    where 'Drama' ilike any(g)
+    group by title;
+
+with cte as (
+    select title, unnest(genre) g
+    from movies
+    where 'Drama' ilike any(g)
+    group by title
+)
+select title, count(g)
+    from cte;
+-----------------------
+with cte as (
+    select title, unnest(genre) g
+    from movies
+)
+select g, count(g)
+    from cte
+    group by g;
+
+----------------------------
+select title,
+    regexp_split_to_table(genre, ',') g
+    from movies;
+
+with cte as(
+    select regexp_split_to_table(genre, ',') g
+    from movies;
+)
+select g, count(g) as count
+    from cte
+    group by g
+    order by count desc;
+
+select rank, regexp_to_split_to_table(genre, ',') g
+    from movies;
+
+select rank, regexp_to_split_to_table(genre, ',') g
+    into movie_genre
+    from movies;

@@ -1,0 +1,51 @@
+-- Table: public.suits
+
+-- DROP TABLE public.suits;
+
+CREATE TABLE public.suits
+(
+    suit character varying(10) COLLATE pg_catalog."default" NOT NULL
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.suits
+    OWNER to postgres;
+
+insert into suits values 
+    ('spade'),
+    ('heart'),
+    ('diamond'),
+    ('club');
+
+insert into ranks values 
+    ('A'),
+    ('2'),
+    ('3'),
+    ('4'),
+    ('5'),
+    ('6'),
+    ('7'),
+    ('8'),
+    ('9'),
+    ('10'),
+    ('J'),
+    ('Q'),
+    ('K');
+
+select rank, suit
+    from suits cross join ranks;
+
+select rank, suit
+    from suits, ranks;
+
+select rank || '-' || suit
+    from suits cross join ranks;
+
+select rank || '-' || suit as card
+    into playing_cards
+    from suits cross join ranks;
+
+drop table playing_cards;

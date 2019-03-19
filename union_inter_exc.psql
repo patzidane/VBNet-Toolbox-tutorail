@@ -1,0 +1,37 @@
+select name from game 
+    where platform = 'PS4' 
+    and genre = 'Fighting';
+
+select name from game 
+    where platform = 'XOne' 
+    and genre = 'Fighting';
+
+--union แสดงที่ไม่ซ้ำ
+select name from game 
+    where platform = 'PS4' 
+    and genre = 'Fighting'
+union
+select name from game 
+    where platform = 'XOne' 
+    and genre = 'Fighting'
+    order by name;
+
+--except แสดงที่มีในตารางแรกที่ไม่ซ้ำและไม่มีในตารางที่2
+select name from game 
+    where platform = 'PS4' 
+    and genre = 'Fighting'
+except
+select name from game 
+    where platform = 'XOne' 
+    and genre = 'Fighting'
+    order by name;
+
+--intersect ที่มีอยู่ในทั้งสองตาราง (inner join)
+select name from game 
+    where platform = 'PS4' 
+    and genre = 'Fighting'
+intersect
+select name from game 
+    where platform = 'XOne' 
+    and genre = 'Fighting'
+    order by name;

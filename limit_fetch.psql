@@ -1,0 +1,14 @@
+select * from province;
+
+select * from province
+    order by area_km2 DESC
+    limit 5;
+
+select * from province
+    order by area_km2 DESC
+    fetch first 10 rows only;
+
+select * from province
+    order by area_km2 DESC
+    offset 5 rows 
+    fetch first 5 rows only;

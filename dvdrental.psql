@@ -1,0 +1,107 @@
+SELECT
+ first_name,
+ last_name
+FROM
+ customer
+ORDER BY
+ first_name ASC,
+ last_name DESC;
+
+CREATE TABLE t1 (
+ id serial NOT NULL PRIMARY KEY,
+ bcolor VARCHAR,
+ fcolor VARCHAR
+);
+
+INSERT INTO t1 (bcolor, fcolor)
+VALUES
+ ('red', 'red'),
+ ('red', 'red'),
+ ('red', NULL),
+ (NULL, 'red'),
+ ('red', 'green'),
+ ('red', 'blue'),
+ ('green', 'red'),
+ ('green', 'blue'),
+ ('green', 'green'),
+ ('blue', 'red'),
+ ('blue', 'green'),
+ ('blue', 'blue');
+	
+SELECT
+ id, bcolor, fcolor FROM t1;
+
+select distinct bcolor from t1 
+    order by bcolor;
+
+select distinct bcolor, fcolor from t1 
+    order by bcolor, fcolor;
+
+select distinct (bcolor) bcolor, fcolor from t1 
+    order by bcolor, fcolor;
+	
+SELECT last_name, first_name
+FROM customer
+WHERE first_name = 'Jamie';
+
+SELECT last_name, first_name
+FROM customer
+WHERE first_name = 'Jamie' AND
+ last_name = 'Rice';
+
+ SELECT customer_id,
+ amount,
+ payment_date
+FROM payment
+WHERE amount <= 1 OR amount >= 8;
+
+select title from film order by film_id limit 5;
+
+select title from film order by film_id limit 4 offset 3;
+
+select film_id, title, rental_rate
+from film order by rental_rate desc limit 10;
+
+select film_id, title from film
+order by title
+fetch first row only;
+
+select film_id, title from film
+order by title
+fetch first 2 row only;
+
+select film_id, title from film
+order by title
+offset 3 rows
+fetch first 2 row only;
+
+select first_name from customer where first_name like 'Jen%';
+
+select first_name from customer where first_name like '_her%';
+
+select first_name from customer where first_name ilike 'BAR%';
+
+select customer_id, rental_id, return_date
+    from rental
+    where customer_id in(1 , 2)
+    order by return_date desc;
+
+select customer_id, rental_id, return_date
+    from rental
+    where customer_id = 1 
+    or customer_id = 2
+    order by return_date desc;
+
+select customer_id, rental_id, return_date
+    from rental
+    where customer_id not in(1 , 2);
+
+select customer_id from rental
+where cast (return_date as DATE) = '2005-05-27';
+
+select first_name from customer
+where customer_id in (
+    select customer_id from rental
+where cast (return_date as DATE) = '2005-05-27'
+);
+

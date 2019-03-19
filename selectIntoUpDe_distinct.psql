@@ -1,0 +1,97 @@
+select * from drink;
+
+select distinct name from drink;
+
+select distinct name, price from cafe;
+
+update cafe set price = 10 where product_id = 7;
+
+select fname || '' || lname from customer;
+
+select name || '(' || region || ')'
+from province;
+
+select name || ' (' || to_char (area_km2, '999,999.99') || 'km2)'
+from province;
+
+select name || to_char(area_km2, '" ("999,999.99" km2)"')
+from province;
+
+--select into for create new table
+select name from province;
+
+select name into p_name from province;
+
+select name from p_name;
+
+select region, count(*)
+    from province
+    group by region;
+
+select region, count(*) "# provinces", sum(area_km2) as area
+    into province_info
+    from province
+    group by region;
+
+select * 
+    into buri
+    from province
+    where name like '%buri%';
+
+--update
+update drink set price = price +2;
+
+update drink set name ='diet coke'
+where name = 'coke';
+
+insert into drink values(4, 'coke', 20);
+
+update drink set name = 'mineral water'
+--where name = 'water';
+where product_id = 63;
+
+update drink set price = price -2
+where name ilike '%tea%' ;
+
+update drink set is_recommend = false
+where is_recommend is null;
+
+update drink set name = initcap(name);
+
+update drink set name = lower(name);
+
+insert into drink values (40, 'Pepsi', 22);
+
+update drink set name = upper(name);
+
+--case sensitive in pgsql
+update drink set name = 'coke'
+where name = 'diet coke';
+
+update drink set name = 'Pepsi Max'
+where lower(name) = 'pepsi';
+
+update drink set price = price - 10
+where name ilike '%tea%' and
+price > 50;
+
+
+--delete
+delete from drink 
+where name = '7-up';
+
+delete from drink 
+where lower(name) ='latte';
+
+delete from drink 
+where upper(name) ='LATTE';
+
+delete from drink
+where name ilike '%tea%';
+
+delete from drink
+where price > 50;
+
+delete from drink
+where price >= 20 and price <= 50 ;
+

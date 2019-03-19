@@ -1,0 +1,13 @@
+--INNER JION
+select "AlbumId", "Title", "Album"."ArtistId", "Name"
+    from "Album" inner join "Artist" on "Album"."ArtistId" = "Artist"."ArtistId"
+    limit 10;
+
+select "AlbumId", "Title", "Album"."ArtistId", "Name"
+    from "Album" inner join "Artist" using ("ArtistId")
+    limit 5;
+
+--NATURAL JOIN
+select "AlbumId", "Title", "Album"."ArtistId", "Name"
+    from "Album" natural join "Artist" 
+    limit 3;
